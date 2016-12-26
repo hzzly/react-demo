@@ -61,11 +61,11 @@ class CommentForm extends React.Component {
 }
 
 
-//测试数据
-let comments = [
-	{author: 'hzzly', body: 'this is a comment'},
-	{author: 'hzzly2', body: '哈哈哈哈'}
-]
+//测试数据 放到 json 文件里
+// let comments = [
+// 	{author: 'hzzly', body: 'this is a comment'},
+// 	{author: 'hzzly2', body: '哈哈哈哈'}
+// ]
 
 
 //CommentBox组件
@@ -74,8 +74,24 @@ class CommentBox extends React.Component {
 	constructor(props) {
 		super()
 		this.state = {
-			comments: props.comments
+			comments: props.comments || []
 		}
+	}
+
+	loadDataFromServer() {
+		$.ajax({
+			url: this.props.url,
+			dataType: 'json',
+			success: (comments) => {
+				this.setState({
+					comments: comments
+				})
+			}
+		})
+	}
+
+	componentDidMount() {
+		this.loadDataFromServer()
 	}
 
 	handleNewComment(comment) {
@@ -92,7 +108,7 @@ class CommentBox extends React.Component {
 				type: 'POST',
 				dataType: 'json',
 				data: comment,
-				success: comments => {
+				success: (comments) => {
 					this.setState({
 						comments: comments
 					})
@@ -121,6 +137,6 @@ class CommentBox extends React.Component {
 }
 
 ReactDOM.render(
-	<CommentBox comments={comments}/>,
+	<CommentBox url="./comments.json"/>,
 	document.getElementById('content')
 );
