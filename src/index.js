@@ -36,11 +36,26 @@ class CommentList extends React.Component {
 
 //CommentForm组件
 class CommentForm extends React.Component {
+
+	handleSubmit(e) {
+		e.preventDefault()
+
+		const author = this.refs.author.value.trim()
+		const body = this.refs.body.value.trim()
+		const form = this.refs.form
+
+		this.props.onSubmit({author:author,body:body})
+
+		form.reset()
+	}
+
 	render() {
 		return (
-			<div className="comment-form">
-				CommentForm
-			</div>
+			<form className="comment-form" ref="form" onSubmit={e => this.handleSubmit(e)}>
+				<input type="text" placeholder="input you name" ref="author"/>
+				<input type="text" placeholder="input you comment" ref="body"/>
+				<input type="submit" value="Add Comment" />
+			</form>
 		)
 	}
 }
@@ -63,12 +78,43 @@ class CommentBox extends React.Component {
 		}
 	}
 
+	handleNewComment(comment) {
+
+		const comments = this.state.comments
+		const newCommnent = comments.concat(comment)
+		this.setState({
+			comments: newCommnent
+		})
+
+		setTimeout(() => {
+			$.ajax({
+				url: this.props.url,
+				type: 'POST',
+				dataType: 'json',
+				data: comment,
+				success: comments => {
+					this.setState({
+						comments: comments
+					})
+				},
+				error: (err) => {
+					// console.log(err)
+					this.setState({
+						comments: comments
+					})
+				}
+			})
+		}, 2000);
+		
+		
+	}
+
 	render() {
 		return (
 			<div className="comment-box">
 				<h1>Comments</h1>
 				<CommentList comments={this.state.comments}></CommentList>
-				<CommentForm></CommentForm>
+				<CommentForm onSubmit={comment => this.handleNewComment(comment)}></CommentForm>
 			</div>
 		);
 	}

@@ -4,7 +4,7 @@
   "description": "my first react demo",
   "main": "index.js",
   "scripts": {
-    "browser-sync": "browser-sync start --server --files *.*"
+    "browser-sync": "browser-sync start --server --files \"*.*\""
   },
   "repository": {
     "type": "git",
